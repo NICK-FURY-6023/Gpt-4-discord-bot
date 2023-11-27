@@ -367,4 +367,4 @@ async function getCpuUsage() {
   };
 }
 
-client.login('MTEyNzIwNzM3MDUwMjcwNTI5Mw.GQMJAT.W4U4xF7hHnZdcfu7Raly9kzrW_LVmhOH0xKD0k');
+client.login('bot_token');
