@@ -13,7 +13,7 @@ const client = new Client({
 });
 // Define an array of allowed channel IDs
 
-const allowedChannels = ["1127176908447174666", "1138468138875371530"];
+const allowedChannels = ["1127176908447174666", "1138468138875371530", "1169197223712665622"];
 // Define your custom bot version
 const botVersion = '1.3.1'; // Replace with your desired bot version
 
@@ -33,7 +33,12 @@ client.on('ready', () => {
 // Function to set activity status
 function setActivityStatus() {
   const activities = [
-    'WITH YOUR 🧠',
+    'Bot under maintenance',
+  'Working on improvements',
+  'Upgrading AI capabilities',
+  '🔧 Fixing bugs',
+  'Enhancing user experience',
+      'WITH YOUR 🧠',
     'with Discord',
     'I CAN CONTROL YOU',
     'AI IS THE FUTURE',
@@ -45,8 +50,34 @@ function setActivityStatus() {
     'Powered by VAYU ESPORTS',
     'गर्व से कहो हम हिंदू हैं। 🚩🚩',
     'AI IS THE FUTURE',
+  'Support: discord.gg/vayuesports',
+  'Exploring the metaverse',
+  'Chatting with users',
+  'Learning new tricks',
+  'Bot under maintenance',
+  'Working on improvements',
+      'WITH YOUR 🧠',
+    'with Discord',
     'I CAN CONTROL YOU',
-    'I CAN DISTORY YOU',
+    'AI IS THE FUTURE',
+    'WITH YOUR BRAIN',
+    'गर्व से कहो हम हिंदू हैं। 🚩🚩',
+    'with JavaScript',
+    'with GPT-3.5 TURBO',
+    'with AI',
+    'Powered by VAYU ESPORTS',
+    'गर्व से कहो हम हिंदू हैं। 🚩🚩',
+    'AI IS THE FUTURE',
+  'Upgrading AI capabilities',
+  'Providing helpful responses',
+  'Adapting to your needs',
+  'Creating AI magic',
+  'Evolving every day',
+      'Bot under maintenance',
+  'Working on improvements',
+  'Upgrading AI capabilities',
+  'Making Discord smarter',
+  'Join our support server!',
   ];
   const randomActivity = activities[Math.floor(Math.random() * activities.length)];
 
@@ -57,20 +88,10 @@ function setActivityStatus() {
 function setPresenceStatus() {
   // Set DND status (Do Not Disturb)
   client.user.setStatus('dnd');
-
-  // Set online status after 5 seconds
-  setTimeout(() => {
-    client.user.setStatus('online');
-  }, 3000);
-
-  // Set idle status after 10 seconds
-  setTimeout(() => {
-    client.user.setStatus('idle');
-  }, 3000);
 }
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "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",
 });
 
 const openai = new OpenAIApi(configuration);
@@ -172,7 +193,7 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  if (message.content.toLowerCase() === '!botinfo') {
+ if (message.content.toLowerCase() === '!botinfo') {
     const botInfoMessage = await message.channel.send('Getting bot information...');
 
     const uptime = getUptime();
@@ -189,18 +210,38 @@ client.on('messageCreate', async (message) => {
       `> CPU Speed: ${os.cpus()[0].speed} MHz\n` +
       `> User CPU Usage: ${cpuUsage.userCpu} ms\n` +
       `> System CPU Usage: ${cpuUsage.systemCpu} ms\n` +
-  //    `> Total CPU Usage: ${cpuUsage.totalCpu.toFixed(2)} ms`
       `> Memory: ${formatBytes(os.totalmem())}`;
 
     const botInfo = `**Bot Information**\n` +
-      `> Bot Version: ${botVersion}\n` + // Include the custom bot version here
+      `> Bot Version: ${botVersion}\n` +
       `> Bot Uptime: ${uptime}\n` +
-      `> Bot Ping ${client.ws.ping}ms\n` +
+      `> Bot Ping: ${client.ws.ping}ms\n` +
       `> Server Count: ${serverCount}\n` +
       `> User Count: ${userCount}`;
 
-    botInfoMessage.edit(systemInfo + '\n\n' + botInfo);
+    const embed = {
+      color: 0x00ff00, // Change the color as desired
+      title: 'All Information',
+      fields: [
+        {
+          name: '> _____________________________',
+          value: systemInfo,
+        },
+        {
+          name: '> _____________________________',
+          value: botInfo,
+        },
+      ],
+      timestamp: new Date(),
+      footer: {
+        text: `Requested by ${message.author.tag}`,
+        icon_url: message.author.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }),
+      },
+    };
+
+    botInfoMessage.edit({ embeds: [embed] });
   }
+    
 
   if (message.content.toLowerCase() === '!rb') {
     if (message.author.id !== '761635564835045387') {
@@ -240,7 +281,7 @@ client.on('messageCreate', async (message) => {
     });
 
     const result = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-3.5-turbo-1106',
       messages: conversationLog,
     });
 
@@ -248,25 +289,32 @@ client.on('messageCreate', async (message) => {
 
     const reply = result.data.choices[0].message.content;
 
-    // Mention and reply to the user
+  // Mention and reply to the user
     const chunkSize = 1999;
     for (let i = 0; i < reply.length; i += chunkSize) {
       const chunk = reply.substring(i, i + chunkSize);
       await message.reply(chunk);
     }
   } catch (error) {
-    console.log(`ERR: ${error}`);
+    console.error('An error occurred:', error);
+
+    // Send a custom error message to the Discord channel and mention the developer
+    const errorMessage = `Uh-oh! ${message.author}, I encountered an error and am informing the developer. Please check back later or contact the developer for assistance. <@761635564835045387>`;
+    message.channel.send(errorMessage);
   }
 });
+
 
 // Calculate bot uptime
 function getUptime() {
   const uptime = process.uptime();
-  const hours = Math.floor(uptime / 3600);
+  const days = Math.floor(uptime / 86400);
+  const hours = Math.floor((uptime % 86400) / 3600);
   const minutes = Math.floor((uptime % 3600) / 60);
   const seconds = Math.floor(uptime % 60);
-  return `${hours}h ${minutes}m ${seconds}s`;
-}
+  
+  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+} 
 
 // Format bytes to human-readable string
 function formatBytes(bytes, decimals = 2) {
@@ -319,4 +367,4 @@ async function getCpuUsage() {
   };
 }
 
-client.login('BOT_TOKEN');
+client.login('MTEyNzIwNzM3MDUwMjcwNTI5Mw.GQMJAT.W4U4xF7hHnZdcfu7Raly9kzrW_LVmhOH0xKD0k');
